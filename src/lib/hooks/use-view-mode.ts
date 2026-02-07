@@ -11,6 +11,9 @@ export function useViewMode() {
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
+    // Only run on client
+    if (typeof window === 'undefined') return;
+    
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored === 'grid' || stored === 'table') {
@@ -23,7 +26,7 @@ export function useViewMode() {
   }, []);
 
   useEffect(() => {
-    if (isInitialized) {
+    if (isInitialized && typeof window !== 'undefined') {
       try {
         localStorage.setItem(STORAGE_KEY, viewMode);
       } catch (error) {

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Clear Service Worker</title>
+</head>
+<body>
+  <h1>Clearing Service Workers and Cache...</h1>
+  <div id="status"></div>
+  
+  <script>
+    const status = document.getElementById('status');
+    
+    async function clearEverything() {
+      try {
+        // Unregister all service workers
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const registration of registrations) {
+          await registration.unregister();
+          status.innerHTML += '<p>✓ Unregistered service worker</p>';
+        }
+        
+        // Clear all caches
+        const cacheNames = await caches.keys();
+        for (const cacheName of cacheNames) {
+          await caches.delete(cacheName);
+          status.innerHTML += `<p>✓ Deleted cache: ${cacheName}</p>`;
+        }
+        
+        // Clear IndexedDB
+        const dbs = await indexedDB.databases();
+        for (const db of dbs) {
+          indexedDB.deleteDatabase(db.name);
+          status.innerHTML += `<p>✓ Deleted database: ${db.name}</p>`;
+        }
+        
+        // Clear localStorage
+        localStorage.clear();
+        status.innerHTML += '<p>✓ Cleared localStorage</p>';
+        
+        // Clear sessionStorage
+        sessionStorage.clear();
+        status.innerHTML += '<p>✓ Cleared sessionStorage</p>';
+        
+        status.innerHTML += '<p style="color: green; font-weight: bold; margin-top: 20px;">✓ All cleared! Please close this tab and refresh the main app.</p>';
+        
+      } catch (error) {
+        status.innerHTML += `<p style="color: red;">Error: ${error.message}</p>`;
+      }
+    }
+    
+    clearEverything();
+  </script>
+</body>
+</html>

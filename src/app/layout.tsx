@@ -21,8 +21,8 @@ export const metadata: Metadata = {
   description: "Aplicação web progressiva para gestão de coleção de Pokémon",
   manifest: "/manifest.json",
   icons: {
-    icon: "/icons/icon-192.png",
-    apple: "/icons/icon-192.png",
+    icon: "/favicon.ico",
+    apple: "/favicon.ico",
   },
   appleWebApp: {
     capable: true,

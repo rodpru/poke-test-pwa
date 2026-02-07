@@ -3,3 +3,4 @@ export * from './use-pokemon-details';
 export * from './use-pokedex';
 export * from './use-online-status';
 export * from './use-view-mode';
+export * from './use-filters';
