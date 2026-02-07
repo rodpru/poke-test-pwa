@@ -1,20 +1,30 @@
 'use client';
 
 import Link from 'next/link';
-import { usePokedex } from '@/lib/hooks';
+import { usePokedex, useSelection } from '@/lib/hooks';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { POKEMON_TYPE_COLORS } from '@/lib/types';
 import { formatPokemonId, formatHeight, formatWeight } from '@/lib/utils/formatters';
-import { Trash2, Eye, Sparkles, ArrowLeft } from 'lucide-react';
+import { Trash2, Eye, Sparkles, ArrowLeft, Download, CheckSquare, Square } from 'lucide-react';
 import Image from 'next/image';
 import { useToast } from '@/components/ui/toast';
-
+import { BulkActions } from '@/components/pokedex/bulk-actions';
+import { generateCSV, downloadCSV } from '@/lib/utils/csv-export';
 
 export default function PokedexPage() {
-  const { caught, removePokemon, getCaughtCount, getCaughtByType } = usePokedex();
+  const { caught, removePokemon, removeMultiple, getCaughtCount, getCaughtByType } = usePokedex();
   const { addToast } = useToast();
   
+  const { 
+    selectedIds, 
+    isSelectionMode, 
+    toggleSelection, 
+    selectAll, 
+    clearSelection, 
+    toggleSelectionMode,
+    isAllSelected 
+  } = useSelection(caught, (p) => p.id);
 
   const handleRemove = (id: number, name: string) => {
     if (confirm(`Tem certeza que deseja libertar ${name}?`)) {
@@ -24,6 +34,46 @@ export default function PokedexPage() {
         message: `${name} foi removido da sua Pokédex.`,
         variant: 'info',
       });
+    }
+  };
+
+  const handleBulkRemove = () => {
+    if (confirm(`Tem certeza que deseja remover ${selectedIds.length} Pokémon?`)) {
+      removeMultiple(selectedIds as number[]);
+      clearSelection();
+      addToast({
+        title: 'Pokémon Removidos',
+        message: `${selectedIds.length} Pokémon foram removidos.`,
+        variant: 'info',
+      });
+    }
+  };
+
+  const handleExport = () => {
+    try {
+      const csv = generateCSV(caught);
+      const filename = `pokedex-export-${new Date().toISOString().split('T')[0]}.csv`;
+      downloadCSV(csv, filename);
+      addToast({
+        title: 'Exportação Concluída',
+        message: 'Sua Pokédex foi exportada com sucesso.',
+        variant: 'success',
+      });
+    } catch (error) {
+      console.error('Export error:', error);
+      addToast({
+        title: 'Erro na Exportação',
+        message: 'Não foi possível exportar seus dados.',
+        variant: 'error',
+      });
+    }
+  };
+
+  const handleHeaderCheckboxChange = () => {
+    if (isAllSelected) {
+      clearSelection();
+    } else {
+      selectAll();
     }
   };
 
@@ -74,8 +124,8 @@ export default function PokedexPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="mb-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pb-32">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <Link 
           href="/"
           className="inline-flex items-center text-gray-500 hover:text-red-500 transition-colors"
@@ -83,6 +133,31 @@ export default function PokedexPage() {
           <ArrowLeft className="w-4 h-4 mr-1" />
           Voltar para Home
         </Link>
+        
+        <div className="flex gap-2 w-full sm:w-auto">
+          <Button 
+            variant="outline" 
+            onClick={toggleSelectionMode}
+            className="flex-1 sm:flex-none"
+          >
+            {isSelectionMode ? (
+              <>Cancelar Seleção</>
+            ) : (
+              <>
+                <CheckSquare className="w-4 h-4 mr-2" />
+                Selecionar
+              </>
+            )}
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={handleExport}
+            className="flex-1 sm:flex-none"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Exportar CSV
+          </Button>
+        </div>
       </div>
 
       <div className="text-center mb-12">
@@ -119,6 +194,20 @@ export default function PokedexPage() {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
+                {isSelectionMode && (
+                  <th className="w-12 px-4 py-3">
+                    <div 
+                      className="cursor-pointer flex items-center justify-center"
+                      onClick={handleHeaderCheckboxChange}
+                    >
+                      {isAllSelected ? (
+                        <CheckSquare className="w-5 h-5 text-red-600" />
+                      ) : (
+                        <Square className="w-5 h-5 text-gray-400" />
+                      )}
+                    </div>
+                  </th>
+                )}
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">
                   Pokémon
                 </th>
@@ -140,73 +229,105 @@ export default function PokedexPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {caught.map((pokemon) => (
-                <tr key={pokemon.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center space-x-3">
-                      <div className="relative w-12 h-12 flex-shrink-0">
-                        <Image
-                          src={pokemon.sprite}
-                          alt={pokemon.name}
-                          fill
-                          className="object-contain"
-                          sizes="48px"
-                        />
+              {caught.map((pokemon) => {
+                const isSelected = selectedIds.includes(pokemon.id);
+                return (
+                  <tr 
+                    key={pokemon.id} 
+                    className={`hover:bg-gray-50 transition-colors ${isSelected ? 'bg-red-50' : ''}`}
+                    onClick={isSelectionMode ? () => toggleSelection(pokemon.id) : undefined}
+                  >
+                    {isSelectionMode && (
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-center cursor-pointer">
+                          {isSelected ? (
+                            <CheckSquare className="w-5 h-5 text-red-600" />
+                          ) : (
+                            <Square className="w-5 h-5 text-gray-300" />
+                          )}
+                        </div>
+                      </td>
+                    )}
+                    <td className="px-4 py-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="relative w-12 h-12 flex-shrink-0">
+                          <Image
+                            src={pokemon.sprite}
+                            alt={pokemon.name}
+                            fill
+                            className="object-contain"
+                            sizes="48px"
+                          />
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500">
+                            {formatPokemonId(pokemon.id)}
+                          </p>
+                          <p className="font-medium text-gray-900 capitalize">
+                            {pokemon.name}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-xs text-gray-500">
-                          {formatPokemonId(pokemon.id)}
-                        </p>
-                        <p className="font-medium text-gray-900 capitalize">
-                          {pokemon.name}
-                        </p>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex flex-wrap gap-1">
+                        {pokemon.types.map((type) => (
+                          <Badge
+                            key={type}
+                            className={`${POKEMON_TYPE_COLORS[type] || 'bg-gray-400'} text-white border-0 capitalize text-xs`}
+                          >
+                            {type}
+                          </Badge>
+                        ))}
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex flex-wrap gap-1">
-                      {pokemon.types.map((type) => (
-                        <Badge
-                          key={type}
-                          className={`${POKEMON_TYPE_COLORS[type] || 'bg-gray-400'} text-white border-0 capitalize text-xs`}
-                        >
-                          {type}
-                        </Badge>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
-                    {formatHeight(pokemon.height)}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
-                    {formatWeight(pokemon.weight)}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
-                    {new Date(pokemon.caughtAt).toLocaleDateString('pt-BR')}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center space-x-2">
-                      <Link href={`/pokemon/${pokemon.id}`}>
-                        <Button variant="ghost" size="sm">
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                      </Link>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                        onClick={() => handleRemove(pokemon.id, pokemon.name)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-600">
+                      {formatHeight(pokemon.height)}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-600">
+                      {formatWeight(pokemon.weight)}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-600">
+                      {new Date(pokemon.caughtAt).toLocaleDateString('pt-BR')}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center space-x-2">
+                        <Link href={`/pokemon/${pokemon.id}`} onClick={e => e.stopPropagation()}>
+                          <Button variant="ghost" size="sm">
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                        </Link>
+                        {!isSelectionMode && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemove(pokemon.id, pokemon.name);
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
       </div>
+
+      <BulkActions
+        selectedCount={selectedIds.length}
+        totalCount={caught.length}
+        onClear={clearSelection}
+        onSelectAll={selectAll}
+        onRemove={handleBulkRemove}
+        isAllSelected={isAllSelected}
+      />
     </div>
   );
 }

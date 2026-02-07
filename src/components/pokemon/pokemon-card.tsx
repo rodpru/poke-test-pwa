@@ -13,9 +13,12 @@ import { Check, Plus } from 'lucide-react';
 
 interface PokemonCardProps {
   pokemon: Pokemon;
+  isSelectionMode?: boolean;
+  isSelected?: boolean;
+  onSelect?: () => void;
 }
 
-export function PokemonCard({ pokemon }: PokemonCardProps) {
+export function PokemonCard({ pokemon, isSelectionMode = false, isSelected = false, onSelect }: PokemonCardProps) {
   const { caught, toggle } = useToggleCatch(pokemon);
   const { addToast } = useToast();
   
@@ -40,18 +43,38 @@ export function PokemonCard({ pokemon }: PokemonCardProps) {
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-200">
+    <Card 
+      className={`overflow-hidden transition-all duration-200 ${
+        isSelected ? 'ring-2 ring-red-500 shadow-md scale-[1.02]' : 'hover:shadow-lg'
+      }`}
+      onClick={isSelectionMode ? onSelect : undefined}
+    >
       <CardContent className="p-4">
         <div className="flex flex-col items-center relative">
+          {/* Selection Checkbox */}
+          {isSelectionMode && (
+            <div className="absolute top-0 left-0 z-20">
+              <div className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${
+                isSelected ? 'bg-red-500 border-red-500 text-white' : 'bg-white border-gray-300'
+              }`}>
+                {isSelected && <Check className="w-4 h-4" strokeWidth={3} />}
+              </div>
+            </div>
+          )}
+
           {/* Caught Badge */}
-          {caught && (
+          {caught && !isSelectionMode && (
             <div className="absolute top-0 right-0 z-10 flex items-center justify-center w-8 h-8 rounded-full bg-green-500 text-white shadow-lg">
               <Check className="w-5 h-5" strokeWidth={3} />
             </div>
           )}
 
           {/* Pokemon Image */}
-          <Link href={`/pokemon/${pokemon.id}`} className="relative w-32 h-32 mb-3">
+          <Link 
+            href={isSelectionMode ? '#' : `/pokemon/${pokemon.id}`} 
+            onClick={(e) => isSelectionMode && e.preventDefault()}
+            className="relative w-32 h-32 mb-3 cursor-pointer"
+          >
             <Image
               src={imageUrl}
               alt={pokemon.name}
@@ -68,7 +91,8 @@ export function PokemonCard({ pokemon }: PokemonCardProps) {
               {formatPokemonId(pokemon.id)}
             </p>
             <Link 
-              href={`/pokemon/${pokemon.id}`}
+              href={isSelectionMode ? '#' : `/pokemon/${pokemon.id}`}
+              onClick={(e) => isSelectionMode && e.preventDefault()}
               className="block text-lg font-bold text-gray-900 hover:text-red-500 transition-colors capitalize mb-2"
             >
               {pokemon.name}
@@ -86,12 +110,13 @@ export function PokemonCard({ pokemon }: PokemonCardProps) {
               ))}
             </div>
 
-            {/* Catch Button */}
+            {/* Catch Button - Disabled in selection mode */}
             <Button
               onClick={handleToggle}
               variant={caught ? 'default' : 'outline'}
               size="sm"
               className="w-full"
+              disabled={isSelectionMode}
             >
               {caught ? (
                 <>
