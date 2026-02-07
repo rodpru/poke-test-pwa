@@ -1,4 +1,5 @@
 import { CaughtPokemon } from '@/lib/types/pokedex.types';
+import { POKEDEX_MAX } from '@/lib/constants';
 
 export interface AnalyticsStats {
   totalCaught: number;
@@ -14,7 +15,7 @@ export interface AnalyticsStats {
   avgSpeed: number;
 }
 
-export function calculateStats(caught: CaughtPokemon[], totalAvailable: number = 1000): AnalyticsStats {
+export function calculateStats(caught: CaughtPokemon[], totalAvailable: number = POKEDEX_MAX): AnalyticsStats {
   const totalCaught = caught.length;
   
   if (totalCaught === 0) {

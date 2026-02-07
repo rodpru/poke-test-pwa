@@ -38,8 +38,7 @@ describe('fetchPokemonList', () => {
 
     expect(result).toEqual(mockResponse);
     expect(fetch).toHaveBeenCalledWith(
-      'https://pokeapi.co/api/v2/pokemon?limit=3',
-      { next: { revalidate: 3600 } }
+      'https://pokeapi.co/api/v2/pokemon?limit=3'
     );
   });
 
@@ -52,8 +51,7 @@ describe('fetchPokemonList', () => {
     await fetchPokemonList();
 
     expect(fetch).toHaveBeenCalledWith(
-      'https://pokeapi.co/api/v2/pokemon?limit=1000',
-      expect.any(Object)
+      'https://pokeapi.co/api/v2/pokemon?limit=1000'
     );
   });
 
@@ -99,8 +97,7 @@ describe('fetchPokemonById', () => {
 
     expect(result).toEqual(mockPokemon);
     expect(fetch).toHaveBeenCalledWith(
-      'https://pokeapi.co/api/v2/pokemon/25',
-      expect.any(Object)
+      'https://pokeapi.co/api/v2/pokemon/25'
     );
   });
 
@@ -145,8 +142,7 @@ describe('fetchPokemonByName', () => {
 
     expect(result).toEqual(mockPokemon);
     expect(fetch).toHaveBeenCalledWith(
-      'https://pokeapi.co/api/v2/pokemon/pikachu',
-      expect.any(Object)
+      'https://pokeapi.co/api/v2/pokemon/pikachu'
     );
   });
 
@@ -180,8 +176,7 @@ describe('fetchPokemonTypes', () => {
 
     expect(result).toEqual(['normal', 'fire', 'water']);
     expect(fetch).toHaveBeenCalledWith(
-      'https://pokeapi.co/api/v2/type',
-      expect.any(Object)
+      'https://pokeapi.co/api/v2/type'
     );
   });
 
@@ -217,8 +212,7 @@ describe('fetchPokemonDetailsByUrl', () => {
 
     expect(result).toEqual(mockPokemon);
     expect(fetch).toHaveBeenCalledWith(
-      'https://pokeapi.co/api/v2/pokemon/1/',
-      expect.any(Object)
+      'https://pokeapi.co/api/v2/pokemon/1/'
     );
   });
 

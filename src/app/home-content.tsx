@@ -7,9 +7,9 @@ import { LoadingState, ErrorState, EmptyState } from '@/components/shared';
 import { Button } from '@/components/ui/button';
 import { Sparkles, X, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { POKEDEX_MAX } from '@/lib/constants';
 
 export function HomeContent() {
-  const POKEDEX_MAX = 1000;
   const { viewMode, setViewMode } = useViewMode();
   const { pokemon, totalCount, loadedCount, isLoading, error } = usePokemonWithDetails();
 
@@ -55,8 +55,8 @@ export function HomeContent() {
           <span className="text-red-500">Pokédex</span> PWA
         </h1>
         <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-          Aplicação web progressiva para gestão da sua coleção de Pokémon.
-          Capture, organize e analise seus Pokémon favoritos!
+          Aplicacao web progressiva para gestao da tua colecao de Pokemon.
+          Captura, organiza e analisa os teus Pokemon favoritos!
         </p>
         <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
           <div className="rounded-md shadow">
@@ -73,7 +73,7 @@ export function HomeContent() {
         <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-blue-800">
-              Carregando Pokémon...
+              A carregar Pokemon...
             </span>
             <span className="text-sm text-blue-600">
               {progressValue} / {POKEDEX_MAX}

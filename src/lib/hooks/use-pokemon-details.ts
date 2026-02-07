@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { usePokemonList } from './use-pokemon-list';
 import { fetchPokemonDetailsByUrl, fetchPokemonById } from '@/lib/services';
 import { Pokemon, PokemonListItem } from '@/lib/types';
@@ -14,12 +14,22 @@ export function usePokemonWithDetails() {
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [detailsError, setDetailsError] = useState<Error | null>(null);
   const [loadedCount, setLoadedCount] = useState(0);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Load initial batch immediately
   useEffect(() => {
     if (!listData?.results) return;
 
-    const fetchInitialBatch = async () => {
+    // Abort previous fetch if still running
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    let cancelled = false;
+
+    const fetchAllBatches = async () => {
       setIsLoadingDetails(true);
       setDetailsError(null);
 
@@ -29,10 +39,13 @@ export function usePokemonWithDetails() {
         const initialResults = await Promise.allSettled(
           initialBatch.map((item: PokemonListItem) => fetchPokemonDetailsByUrl(item.url))
         );
+
+        if (cancelled) return;
+
         const initialDetails = initialResults
           .filter((result): result is PromiseFulfilledResult<Pokemon> => result.status === 'fulfilled')
           .map(result => result.value);
-        
+
         setPokemon(initialDetails);
         setLoadedCount(initialDetails.length);
 
@@ -41,31 +54,44 @@ export function usePokemonWithDetails() {
         const allDetails = [...initialDetails];
 
         for (let i = 0; i < remainingResults.length; i += BATCH_SIZE) {
+          if (cancelled) return;
+
           const batch = remainingResults.slice(i, i + BATCH_SIZE);
           try {
             const batchResults = await Promise.allSettled(
               batch.map((item: PokemonListItem) => fetchPokemonDetailsByUrl(item.url))
             );
+
+            if (cancelled) return;
+
             const batchDetails = batchResults
               .filter((result): result is PromiseFulfilledResult<Pokemon> => result.status === 'fulfilled')
               .map(result => result.value);
-            
+
             allDetails.push(...batchDetails);
             setPokemon([...allDetails]);
             setLoadedCount(allDetails.length);
           } catch (batchErr) {
             console.warn('Failed to load batch:', batchErr);
-            // Continue with next batch instead of failing completely
           }
         }
       } catch (err) {
-        setDetailsError(err instanceof Error ? err : new Error('Failed to fetch Pokemon details'));
+        if (!cancelled) {
+          setDetailsError(err instanceof Error ? err : new Error('Failed to fetch Pokemon details'));
+        }
       } finally {
-        setIsLoadingDetails(false);
+        if (!cancelled) {
+          setIsLoadingDetails(false);
+        }
       }
     };
 
-    fetchInitialBatch();
+    fetchAllBatches();
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
   }, [listData]);
 
   // Function to fetch a specific Pokemon by ID (for search)

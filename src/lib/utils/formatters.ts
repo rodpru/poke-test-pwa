@@ -23,7 +23,7 @@ export function capitalize(str: string): string {
 
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
-  return date.toLocaleDateString('pt-BR', {
+  return date.toLocaleDateString('pt-PT', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -32,7 +32,7 @@ export function formatDate(dateString: string): string {
 
 export function formatDateTime(dateString: string): string {
   const date = new Date(dateString);
-  return date.toLocaleString('pt-BR', {
+  return date.toLocaleString('pt-PT', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',

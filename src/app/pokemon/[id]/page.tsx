@@ -13,6 +13,7 @@ import { ShareButton } from '@/components/pokemon/share-button';
 import { LoadingState, ErrorState } from '@/components/shared';
 import { POKEMON_TYPE_COLORS } from '@/lib/types';
 import { formatPokemonId, formatHeight, formatWeight } from '@/lib/utils/formatters';
+import { POKEDEX_MAX } from '@/lib/constants';
 import { ArrowLeft, ChevronLeft, ChevronRight, Plus, Check, Sparkles } from 'lucide-react';
 import { useToast } from '@/components/ui/toast';
 
@@ -37,14 +38,14 @@ export default function PokemonDetailsPage({ params }: PokemonDetailsPageProps) 
       removePokemon(pokemonId);
       addToast({
         title: 'Pokémon Libertado',
-        message: `${pokemon.name} foi removido da sua Pokédex.`,
+        message: `${pokemon.name} foi removido da tua Pokedex.`,
         variant: 'info',
       });
     } else {
       addPokemon(pokemon);
       addToast({
         title: 'Pokémon Capturado!',
-        message: `${pokemon.name} foi adicionado à sua Pokédex.`,
+        message: `${pokemon.name} foi adicionado a tua Pokedex.`,
         variant: 'success',
       });
     }
@@ -76,7 +77,7 @@ export default function PokemonDetailsPage({ params }: PokemonDetailsPageProps) 
                    pokemon.sprites.front_default;
 
   const prevId = pokemonId > 1 ? pokemonId - 1 : null;
-  const nextId = pokemonId < 1025 ? pokemonId + 1 : null;
+  const nextId = pokemonId < POKEDEX_MAX ? pokemonId + 1 : null;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -172,7 +173,7 @@ export default function PokemonDetailsPage({ params }: PokemonDetailsPageProps) 
               <div>
                 <p className="text-sm text-green-800 font-medium">Capturado!</p>
                 <p className="text-xs text-green-600">
-                  em {new Date(caughtPokemon.caughtAt).toLocaleDateString('pt-BR')}
+                  em {new Date(caughtPokemon.caughtAt).toLocaleDateString('pt-PT')}
                 </p>
               </div>
             </div>
@@ -220,7 +221,7 @@ export default function PokemonDetailsPage({ params }: PokemonDetailsPageProps) 
                 Estatísticas Base
               </h2>
               <PokemonStats stats={pokemon.stats} />
-              <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="mt-4">
                 <PokemonTotalStats stats={pokemon.stats} />
               </div>
             </CardContent>

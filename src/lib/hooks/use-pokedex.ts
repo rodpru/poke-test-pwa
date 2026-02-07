@@ -1,6 +1,9 @@
 import { usePokedexStore } from '@/lib/stores/pokedex.store';
 import { Pokemon } from '@/lib/types/pokemon.types';
 
+// Public facade over the Zustand store. Keeps components decoupled from
+// the store implementation and provides a single import point together
+// with useToggleCatch below.
 export function usePokedex() {
   const store = usePokedexStore();
 

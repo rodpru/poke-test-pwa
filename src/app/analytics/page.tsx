@@ -10,10 +10,10 @@ import { Badge } from '@/components/ui/badge';
 import { POKEMON_TYPE_COLORS } from '@/lib/types';
 import { formatWeight, formatHeight } from '@/lib/utils/formatters';
 import Image from 'next/image';
+import { POKEDEX_MAX } from '@/lib/constants';
 
 export default function AnalyticsPage() {
   const { caught, getCaughtByType } = usePokedex();
-  const POKEDEX_MAX = 1000;
   
   const stats = calculateStats(caught, POKEDEX_MAX);
   const typeCounts = getCaughtByType();
@@ -87,7 +87,7 @@ export default function AnalyticsPage() {
           Dashboard <span className="text-red-500">Analytics</span>
         </h1>
         <p className="mt-3 text-gray-500">
-          Acompanhe o progresso da sua jornada Pokémon
+          Acompanha o progresso da tua jornada Pokemon
         </p>
       </div>
 
@@ -104,8 +104,8 @@ export default function AnalyticsPage() {
         </div>
         <ProgressBar value={stats.totalCaught} max={stats.totalAvailable} />
         <p className="text-center mt-4 text-gray-500 text-sm">
-          Você capturou <strong>{stats.totalCaught}</strong> de <strong>{stats.totalAvailable}</strong> Pokémon disponíveis.
-          Faltam <strong>{stats.totalAvailable - stats.totalCaught}</strong> para completar a coleção!
+          Capturaste <strong>{stats.totalCaught}</strong> de <strong>{stats.totalAvailable}</strong> Pokémon disponíveis.
+          Faltam <strong>{stats.totalAvailable - stats.totalCaught}</strong> para completar a colecao!
         </p>
       </div>
 

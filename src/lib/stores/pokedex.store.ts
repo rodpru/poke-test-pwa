@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { persist, createJSONStorage, type StateStorage } from 'zustand/middleware';
 import localforage from 'localforage';
 import { CaughtPokemon } from '@/lib/types/pokedex.types';
 import { Pokemon } from '@/lib/types/pokemon.types';
@@ -14,6 +14,20 @@ interface PokedexStore {
   getCaughtCount: () => number;
   getCaughtByType: () => Record<string, number>;
 }
+
+// Custom async storage adapter for localforage
+const localforageStorage: StateStorage = {
+  getItem: async (name: string): Promise<string | null> => {
+    const value = await localforage.getItem<string>(name);
+    return value ?? null;
+  },
+  setItem: async (name: string, value: string): Promise<void> => {
+    await localforage.setItem(name, value);
+  },
+  removeItem: async (name: string): Promise<void> => {
+    await localforage.removeItem(name);
+  },
+};
 
 const pokemonToCaughtPokemon = (pokemon: Pokemon, note?: string): CaughtPokemon => ({
   id: pokemon.id,
@@ -90,7 +104,7 @@ export const usePokedexStore = create<PokedexStore>()(
     }),
     {
       name: 'pokedex-storage',
-      storage: createJSONStorage(() => localforage as unknown as Storage),
+      storage: createJSONStorage(() => localforageStorage),
     }
   )
 );

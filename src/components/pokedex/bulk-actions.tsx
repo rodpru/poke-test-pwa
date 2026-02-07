@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 
 interface BulkActionsProps {
   selectedCount: number;
-  totalCount: number;
   onClear: () => void;
   onSelectAll: () => void;
   onRemove: () => void;
@@ -18,7 +17,7 @@ export function BulkActions({
   onSelectAll,
   onRemove,
   isAllSelected,
-}: Omit<BulkActionsProps, 'totalCount'>) {
+}: BulkActionsProps) {
   if (selectedCount === 0) return null;
 
   return (

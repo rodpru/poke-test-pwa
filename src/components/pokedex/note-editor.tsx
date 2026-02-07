@@ -79,7 +79,7 @@ export function NoteEditor({ note, onSave }: NoteEditorProps) {
         </Button>
         <Button size="sm" onClick={handleSave} className="bg-red-500 hover:bg-red-600">
           <Save className="w-4 h-4 mr-1" />
-          Salvar
+          Guardar
         </Button>
       </div>
     </div>

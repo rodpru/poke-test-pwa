@@ -1,5 +1,7 @@
 'use client';
 
+import { useRef } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Pokemon, POKEMON_TYPE_COLORS } from '@/lib/types';
@@ -13,9 +15,11 @@ interface PokemonTableProps {
   pokemon: Pokemon[];
 }
 
+const ROW_HEIGHT = 64;
+
 function PokemonTableRow({ pokemon }: { pokemon: Pokemon }) {
   const { caught, toggle } = useToggleCatch(pokemon);
-  const imageUrl = pokemon.sprites.other?.['official-artwork']?.front_default || 
+  const imageUrl = pokemon.sprites.other?.['official-artwork']?.front_default ||
                    pokemon.sprites.front_default;
 
   return (
@@ -36,7 +40,7 @@ function PokemonTableRow({ pokemon }: { pokemon: Pokemon }) {
         </Link>
       </td>
       <td className="px-4 py-3">
-        <Link 
+        <Link
           href={`/pokemon/${pokemon.id}`}
           className="font-semibold text-gray-900 hover:text-red-500 transition-colors capitalize"
         >
@@ -81,31 +85,59 @@ function PokemonTableRow({ pokemon }: { pokemon: Pokemon }) {
 }
 
 export function PokemonTable({ pokemon }: PokemonTableProps) {
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const virtualizer = useVirtualizer({
+    count: pokemon.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => ROW_HEIGHT,
+    overscan: 10,
+  });
+
   if (pokemon.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">Nenhum Pokémon encontrado.</p>
+        <p className="text-gray-500">Nenhum Pokemon encontrado.</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div ref={parentRef} className="overflow-auto h-[70vh]">
       <table className="w-full">
-        <thead className="bg-gray-100 sticky top-0">
+        <thead className="bg-gray-100 sticky top-0 z-10">
           <tr>
             <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">#</th>
             <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Nome</th>
             <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Tipos</th>
             <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Altura</th>
             <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Peso</th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Ação</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Acao</th>
           </tr>
         </thead>
         <tbody>
-          {pokemon.map((p) => (
-            <PokemonTableRow key={p.id} pokemon={p} />
-          ))}
+          <tr>
+            <td colSpan={6} style={{ padding: 0, border: 'none' }}>
+              <div
+                style={{
+                  height: `${virtualizer.getTotalSize()}px`,
+                  width: '100%',
+                  position: 'relative',
+                }}
+              >
+                <table className="w-full" style={{ position: 'absolute', top: 0, left: 0 }}>
+                  <tbody>
+                    {virtualizer.getVirtualItems().map((virtualRow) => (
+                      <PokemonTableRow
+                        key={pokemon[virtualRow.index].id}
+                        pokemon={pokemon[virtualRow.index]}
+                      />
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>

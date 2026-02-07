@@ -1,18 +1,14 @@
 'use client';
 
 import { useOnlineStatus } from '@/lib/hooks/use-online-status';
-import { Wifi, WifiOff } from 'lucide-react';
+import { WifiOff } from 'lucide-react';
 
 export function OfflineIndicator() {
   const isOnline = useOnlineStatus();
 
+  // Only show indicator when offline to avoid overlap with toasts
   if (isOnline) {
-    return (
-      <div className="fixed bottom-4 right-4 z-50 flex items-center space-x-1 px-3 py-1.5 bg-green-100 text-green-800 rounded-full text-xs font-medium shadow-sm">
-        <Wifi className="w-3 h-3" />
-        <span>Online</span>
-      </div>
-    );
+    return null;
   }
 
   return (

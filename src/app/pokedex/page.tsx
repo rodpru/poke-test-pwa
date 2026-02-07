@@ -31,7 +31,7 @@ export default function PokedexPage() {
       removePokemon(id);
       addToast({
         title: 'Pokémon Libertado',
-        message: `${name} foi removido da sua Pokédex.`,
+        message: `${name} foi removido da tua Pokedex.`,
         variant: 'info',
       });
     }
@@ -56,14 +56,14 @@ export default function PokedexPage() {
       downloadCSV(csv, filename);
       addToast({
         title: 'Exportação Concluída',
-        message: 'Sua Pokédex foi exportada com sucesso.',
+        message: 'A tua Pokedex foi exportada com sucesso.',
         variant: 'success',
       });
     } catch (error) {
       console.error('Export error:', error);
       addToast({
         title: 'Erro na Exportação',
-        message: 'Não foi possível exportar seus dados.',
+        message: 'Nao foi possivel exportar os teus dados.',
         variant: 'error',
       });
     }
@@ -98,7 +98,7 @@ export default function PokedexPage() {
             Minha <span className="text-red-500">Pokédex</span>
           </h1>
           <p className="mt-3 text-gray-500">
-            Gerencie sua coleção de Pokémon capturados
+            Gere a tua colecao de Pokemon capturados
           </p>
         </div>
 
@@ -110,7 +110,7 @@ export default function PokedexPage() {
             Nenhum Pokémon capturado
           </h2>
           <p className="text-gray-500 mb-6">
-            Sua Pokédex está vazia. Capture seus primeiros Pokémon na página inicial!
+            A tua Pokedex esta vazia. Captura os teus primeiros Pokemon na pagina inicial!
           </p>
           <Link href="/">
             <Button className="bg-red-500 hover:bg-red-600">
@@ -165,7 +165,7 @@ export default function PokedexPage() {
           Minha <span className="text-red-500">Pokédex</span>
         </h1>
         <p className="mt-3 text-gray-500">
-          Você capturou {totalCaught} Pokémon
+          Capturaste {totalCaught} Pokemon
         </p>
       </div>
 
@@ -288,7 +288,7 @@ export default function PokedexPage() {
                       {formatWeight(pokemon.weight)}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">
-                      {new Date(pokemon.caughtAt).toLocaleDateString('pt-BR')}
+                      {new Date(pokemon.caughtAt).toLocaleDateString('pt-PT')}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center space-x-2">

@@ -9,7 +9,7 @@ interface ErrorStateProps {
 export function ErrorState({ error, onRetry }: ErrorStateProps) {
   const isOffline = error.message.includes('Network error') || 
                     error.message.includes('offline') ||
-                    typeof window !== 'undefined' && !navigator.onLine;
+                    (typeof window !== 'undefined' && !navigator.onLine);
 
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4">
@@ -21,12 +21,12 @@ export function ErrorState({ error, onRetry }: ErrorStateProps) {
         )}
       </div>
       <h3 className="text-lg font-semibold text-gray-900 mb-2">
-        {isOffline ? 'Você está offline' : 'Algo deu errado'}
+        {isOffline ? 'Estas offline' : 'Algo correu mal'}
       </h3>
       <p className="text-gray-500 text-center max-w-md mb-4">
-        {isOffline 
-          ? 'Verifique sua conexão com a internet e tente novamente.'
-          : error.message || 'Não foi possível carregar os dados. Tente novamente.'}
+        {isOffline
+          ? 'Verifica a tua ligacao a internet e tenta novamente.'
+          : error.message || 'Nao foi possivel carregar os dados. Tenta novamente.'}
       </p>
       {onRetry && (
         <Button onClick={onRetry} variant="outline">

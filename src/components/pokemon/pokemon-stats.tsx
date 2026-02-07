@@ -1,7 +1,7 @@
 'use client';
 
 import { PokemonStat } from '@/lib/types/pokemon.types';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/formatters';
 
 interface PokemonStatsProps {
   stats: PokemonStat[];

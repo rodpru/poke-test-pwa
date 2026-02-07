@@ -63,4 +63,9 @@ export function downloadCSV(content: string, filename: string) {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+  
+  // Revoke URL after download starts to prevent memory leak
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, 100);
 }

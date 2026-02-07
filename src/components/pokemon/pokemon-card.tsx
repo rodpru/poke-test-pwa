@@ -30,13 +30,13 @@ export function PokemonCard({ pokemon, isSelectionMode = false, isSelected = fal
     if (!caught) {
       addToast({
         title: 'Pokémon Capturado!',
-        message: `${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)} foi adicionado à sua Pokédex.`,
+        message: `${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)} foi adicionado a tua Pokedex.`,
         variant: 'success',
       });
     } else {
       addToast({
         title: 'Pokémon Libertado',
-        message: `${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)} foi removido da sua Pokédex.`,
+        message: `${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)} foi removido da tua Pokedex.`,
         variant: 'info',
       });
     }
