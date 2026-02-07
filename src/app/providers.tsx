@@ -6,6 +6,7 @@ import { persistQueryClient } from '@tanstack/react-query-persist-client';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { useState, useEffect, ReactNode } from 'react';
 import { ErrorBoundary } from '@/components/shared/error-boundary';
+import { ToastProvider } from '@/components/ui/toast';
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
@@ -38,9 +39,11 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ErrorBoundary>
-        {children}
-      </ErrorBoundary>
+      <ToastProvider>
+        <ErrorBoundary>
+          {children}
+        </ErrorBoundary>
+      </ToastProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
