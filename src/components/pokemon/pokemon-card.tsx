@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { POKEMON_TYPE_COLORS, Pokemon } from '@/lib/types';
-import { formatPokemonId } from '@/lib/utils/formatters';
-import { useToggleCatch } from '@/lib/hooks';
-import { useToast } from '@/components/ui/toast';
-import { Check, Plus } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { useToast } from "@/components/ui/toast";
+import { useToggleCatch } from "@/lib/hooks";
+import { POKEMON_TYPE_COLORS, Pokemon } from "@/lib/types";
+import { formatPokemonId } from "@/lib/utils/formatters";
+import { Check, Plus } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 interface PokemonCardProps {
   pokemon: Pokemon;
@@ -18,34 +18,42 @@ interface PokemonCardProps {
   onSelect?: () => void;
 }
 
-export function PokemonCard({ pokemon, isSelectionMode = false, isSelected = false, onSelect }: PokemonCardProps) {
+export function PokemonCard({
+  pokemon,
+  isSelectionMode = false,
+  isSelected = false,
+  onSelect,
+}: PokemonCardProps) {
   const { caught, toggle } = useToggleCatch(pokemon);
   const { addToast } = useToast();
-  
-  const imageUrl = pokemon.sprites.other?.['official-artwork']?.front_default || 
-                   pokemon.sprites.front_default;
+
+  const imageUrl =
+    pokemon.sprites.other?.["official-artwork"]?.front_default ||
+    pokemon.sprites.front_default;
 
   const handleToggle = () => {
     toggle();
     if (!caught) {
       addToast({
-        title: 'Pokémon Capturado!',
+        title: "Pokémon Capturado!",
         message: `${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)} foi adicionado a tua Pokedex.`,
-        variant: 'success',
+        variant: "success",
       });
     } else {
       addToast({
-        title: 'Pokémon Libertado',
+        title: "Pokémon Libertado",
         message: `${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)} foi removido da tua Pokedex.`,
-        variant: 'info',
+        variant: "info",
       });
     }
   };
 
   return (
-    <Card 
+    <Card
       className={`overflow-hidden transition-all duration-200 ${
-        isSelected ? 'ring-2 ring-red-500 shadow-md scale-[1.02]' : 'hover:shadow-lg'
+        isSelected
+          ? "ring-2 ring-red-500 shadow-md scale-[1.02]"
+          : "hover:shadow-lg"
       }`}
       onClick={isSelectionMode ? onSelect : undefined}
     >
@@ -54,9 +62,13 @@ export function PokemonCard({ pokemon, isSelectionMode = false, isSelected = fal
           {/* Selection Checkbox */}
           {isSelectionMode && (
             <div className="absolute top-0 left-0 z-20">
-              <div className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${
-                isSelected ? 'bg-red-500 border-red-500 text-white' : 'bg-white border-gray-300'
-              }`}>
+              <div
+                className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${
+                  isSelected
+                    ? "bg-red-500 border-red-500 text-white"
+                    : "bg-white border-gray-300"
+                }`}
+              >
                 {isSelected && <Check className="w-4 h-4" strokeWidth={3} />}
               </div>
             </div>
@@ -70,8 +82,8 @@ export function PokemonCard({ pokemon, isSelectionMode = false, isSelected = fal
           )}
 
           {/* Pokemon Image */}
-          <Link 
-            href={isSelectionMode ? '#' : `/pokemon/${pokemon.id}`} 
+          <Link
+            href={isSelectionMode ? "#" : `/pokemon/${pokemon.id}`}
             onClick={(e) => isSelectionMode && e.preventDefault()}
             className="relative w-32 h-32 mb-3 cursor-pointer"
           >
@@ -90,8 +102,8 @@ export function PokemonCard({ pokemon, isSelectionMode = false, isSelected = fal
             <p className="text-gray-500 text-sm font-medium">
               {formatPokemonId(pokemon.id)}
             </p>
-            <Link 
-              href={isSelectionMode ? '#' : `/pokemon/${pokemon.id}`}
+            <Link
+              href={isSelectionMode ? "#" : `/pokemon/${pokemon.id}`}
               onClick={(e) => isSelectionMode && e.preventDefault()}
               className="block text-lg font-bold text-gray-900 hover:text-red-500 transition-colors capitalize mb-2"
             >
@@ -103,7 +115,7 @@ export function PokemonCard({ pokemon, isSelectionMode = false, isSelected = fal
               {pokemon.types.map((type) => (
                 <Badge
                   key={type.type.name}
-                  className={`${POKEMON_TYPE_COLORS[type.type.name] || 'bg-gray-400'} text-white border-0 capitalize`}
+                  className={`${POKEMON_TYPE_COLORS[type.type.name] || "bg-gray-400"} text-white border-0 capitalize`}
                 >
                   {type.type.name}
                 </Badge>
@@ -113,7 +125,7 @@ export function PokemonCard({ pokemon, isSelectionMode = false, isSelected = fal
             {/* Catch Button - Disabled in selection mode */}
             <Button
               onClick={handleToggle}
-              variant={caught ? 'default' : 'outline'}
+              variant={caught ? "default" : "outline"}
               size="sm"
               className="w-full"
               disabled={isSelectionMode}
@@ -121,7 +133,7 @@ export function PokemonCard({ pokemon, isSelectionMode = false, isSelected = fal
               {caught ? (
                 <>
                   <Check className="w-4 h-4 mr-1" />
-                  Capturado
+                  Libertar
                 </>
               ) : (
                 <>

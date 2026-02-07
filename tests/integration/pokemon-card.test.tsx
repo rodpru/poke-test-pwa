@@ -1,46 +1,48 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { PokemonCard } from '@/components/pokemon/pokemon-card';
-import { Pokemon } from '@/lib/types';
+import { PokemonCard } from "@/components/pokemon/pokemon-card";
+import { Pokemon } from "@/lib/types";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock hooks
-vi.mock('@/lib/hooks', () => ({
+vi.mock("@/lib/hooks", () => ({
   useToggleCatch: vi.fn(),
 }));
 
-vi.mock('@/components/ui/toast', () => ({
+vi.mock("@/components/ui/toast", () => ({
   useToast: vi.fn(),
 }));
 
 // Mock Next.js Link and Image
-vi.mock('next/link', () => ({
+vi.mock("next/link", () => ({
   default: ({ children, href, ...props }: any) => (
-    <a href={href} {...props}>{children}</a>
+    <a href={href} {...props}>
+      {children}
+    </a>
   ),
 }));
 
-vi.mock('next/image', () => ({
+vi.mock("next/image", () => ({
   default: ({ src, alt, ...props }: any) => (
     <img src={src} alt={alt} {...props} />
   ),
 }));
 
-import { useToggleCatch } from '@/lib/hooks';
-import { useToast } from '@/components/ui/toast';
+import { useToast } from "@/components/ui/toast";
+import { useToggleCatch } from "@/lib/hooks";
 
-describe('PokemonCard', () => {
+describe("PokemonCard", () => {
   const mockPokemon: Pokemon = {
     id: 25,
-    name: 'pikachu',
-    types: [{ slot: 1, type: { name: 'electric', url: '' } }],
+    name: "pikachu",
+    types: [{ slot: 1, type: { name: "electric", url: "" } }],
     height: 4,
     weight: 60,
     stats: [],
     sprites: {
-      front_default: 'sprite.png',
+      front_default: "sprite.png",
       other: {
-        'official-artwork': {
-          front_default: 'official-artwork.png',
+        "official-artwork": {
+          front_default: "official-artwork.png",
         },
       },
     },
@@ -62,16 +64,16 @@ describe('PokemonCard', () => {
     });
   });
 
-  it('renders Pokemon card correctly', () => {
+  it("renders Pokemon card correctly", () => {
     render(<PokemonCard pokemon={mockPokemon} />);
 
-    expect(screen.getByText('pikachu')).toBeInTheDocument();
-    expect(screen.getByText('#025')).toBeInTheDocument();
-    expect(screen.getByText('electric')).toBeInTheDocument();
-    expect(screen.getByText('Capturar')).toBeInTheDocument();
+    expect(screen.getByText("pikachu")).toBeInTheDocument();
+    expect(screen.getByText("#025")).toBeInTheDocument();
+    expect(screen.getByText("electric")).toBeInTheDocument();
+    expect(screen.getByText("Capturar")).toBeInTheDocument();
   });
 
-  it('shows caught badge when Pokemon is caught', () => {
+  it("shows caught badge when Pokemon is caught", () => {
     vi.mocked(useToggleCatch).mockReturnValue({
       caught: true,
       toggle: mockToggle,
@@ -79,19 +81,19 @@ describe('PokemonCard', () => {
 
     render(<PokemonCard pokemon={mockPokemon} />);
 
-    expect(screen.getByText('Capturado')).toBeInTheDocument();
+    expect(screen.getByText("Capturado")).toBeInTheDocument();
   });
 
-  it('calls toggle when catch button is clicked', () => {
+  it("calls toggle when catch button is clicked", () => {
     render(<PokemonCard pokemon={mockPokemon} />);
 
-    const button = screen.getByText('Capturar');
+    const button = screen.getByText("Capturar");
     fireEvent.click(button);
 
     expect(mockToggle).toHaveBeenCalledTimes(1);
   });
 
-  it('shows success toast when capturing', () => {
+  it("shows success toast when capturing", () => {
     vi.mocked(useToggleCatch).mockReturnValue({
       caught: false,
       toggle: mockToggle,
@@ -99,18 +101,18 @@ describe('PokemonCard', () => {
 
     render(<PokemonCard pokemon={mockPokemon} />);
 
-    const button = screen.getByText('Capturar');
+    const button = screen.getByText("Capturar");
     fireEvent.click(button);
 
     expect(mockAddToast).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: 'Pokémon Capturado!',
-        variant: 'success',
-      })
+        title: "Pokémon Capturado!",
+        variant: "success",
+      }),
     );
   });
 
-  it('shows info toast when releasing', () => {
+  it("shows info toast when releasing", () => {
     vi.mocked(useToggleCatch).mockReturnValue({
       caught: true,
       toggle: mockToggle,
@@ -118,43 +120,44 @@ describe('PokemonCard', () => {
 
     render(<PokemonCard pokemon={mockPokemon} />);
 
-    const button = screen.getByText('Capturado');
+    const button = screen.getByText("Capturado");
     fireEvent.click(button);
 
     expect(mockAddToast).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: 'Pokémon Libertado',
-        variant: 'info',
-      })
+        title: "Pokémon Libertado",
+        variant: "info",
+      }),
     );
   });
 
-  it('renders in selection mode', () => {
+  it("renders in selection mode", () => {
     render(
       <PokemonCard
         pokemon={mockPokemon}
         isSelectionMode={true}
         isSelected={false}
         onSelect={mockToggle}
-      />
+      />,
     );
 
     // Should show checkbox in selection mode
-    expect(screen.getByRole('button')).toBeDisabled();
+    expect(screen.getByRole("button")).toBeDisabled();
   });
 
-  it('calls onSelect when clicked in selection mode', () => {
+  it("calls onSelect when clicked in selection mode", () => {
     render(
       <PokemonCard
         pokemon={mockPokemon}
         isSelectionMode={true}
         isSelected={false}
         onSelect={mockToggle}
-      />
+      />,
     );
 
-    const card = screen.getByText('pikachu').closest('div[class*="Card"]') || 
-                 screen.getByText('pikachu').closest('div');
+    const card =
+      screen.getByText("pikachu").closest('div[class*="Card"]') ||
+      screen.getByText("pikachu").closest("div");
     if (card) {
       fireEvent.click(card);
       expect(mockToggle).toHaveBeenCalled();
