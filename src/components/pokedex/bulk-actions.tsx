@@ -14,12 +14,11 @@ interface BulkActionsProps {
 
 export function BulkActions({
   selectedCount,
-  totalCount,
   onClear,
   onSelectAll,
   onRemove,
   isAllSelected,
-}: BulkActionsProps) {
+}: Omit<BulkActionsProps, 'totalCount'>) {
   if (selectedCount === 0) return null;
 
   return (

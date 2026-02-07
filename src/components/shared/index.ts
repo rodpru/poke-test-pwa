@@ -2,3 +2,4 @@ export { LoadingState, PokemonCardSkeleton, PokemonGridSkeleton, PokemonTableSke
 export { ErrorState } from './error-state';
 export { EmptyState } from './empty-state';
 export { ErrorBoundary } from './error-boundary';
+export { ChromeExtensionCleanup } from './chrome-extension-cleanup';

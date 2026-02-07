@@ -322,7 +322,6 @@ export default function PokedexPage() {
 
       <BulkActions
         selectedCount={selectedIds.length}
-        totalCount={caught.length}
         onClear={clearSelection}
         onSelectAll={selectAll}
         onRemove={handleBulkRemove}

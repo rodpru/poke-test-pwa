@@ -18,7 +18,7 @@ export default function AnalyticsPage() {
   const stats = calculateStats(caught, POKEDEX_MAX);
   const typeCounts = getCaughtByType();
 
-  const StatCard = ({ icon: Icon, title, value, subtext }: any) => (
+  const StatCard = ({ icon: Icon, title, value, subtext }: { icon: React.ElementType, title: string, value: string | number, subtext?: string }) => (
     <Card>
       <CardContent className="p-6 flex items-center space-x-4">
         <div className="p-3 bg-red-100 rounded-full text-red-600">
@@ -33,7 +33,7 @@ export default function AnalyticsPage() {
     </Card>
   );
 
-  const PokemonShowcase = ({ title, pokemon, metric, unit, icon: Icon }: any) => {
+  const PokemonShowcase = ({ title, pokemon, metric, unit, icon: Icon }: { title: string, pokemon: { sprite: string, name: string, types: string[], weight?: number, height?: number } | null, metric: string | null, unit: string, icon: React.ElementType }) => {
     if (!pokemon) return null;
     return (
       <Card className="overflow-hidden">
