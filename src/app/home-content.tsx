@@ -26,16 +26,7 @@ export function HomeContent() {
     resetFilters,
   } = useFilters({ pokemon });
 
-  // Show loading only on initial load (when we have no pokemon yet)
-  if (isLoading && pokemon.length === 0) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <LoadingState mode={viewMode} />
-      </div>
-    );
-  }
-
-  if (error) {
+  if (error && pokemon.length === 0) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <ErrorState error={error} />
@@ -43,6 +34,7 @@ export function HomeContent() {
     );
   }
 
+  const isInitialLoading = isLoading && pokemon.length === 0;
   const displayTotal = Math.min(totalCount, POKEDEX_MAX);
   const progressValue = Math.min(loadedCount, POKEDEX_MAX);
   const progressPercent = (progressValue / POKEDEX_MAX) * 100;
@@ -152,12 +144,14 @@ export function HomeContent() {
       </div>
 
       {/* Pokemon List */}
-      {filteredPokemon.length === 0 ? (
+      {isInitialLoading ? (
+        <LoadingState mode={viewMode} />
+      ) : filteredPokemon.length === 0 ? (
         <div className="flex flex-col items-center">
           <EmptyState
             title="Nenhum Pokémon encontrado"
-            description={isLoadingMore 
-              ? "Ainda estamos a carregar todos os Pokémon. Tenta novamente dentro de momentos." 
+            description={isLoadingMore
+              ? "Ainda estamos a carregar todos os Pokémon. Tenta novamente dentro de momentos."
               : "Tente ajustar os filtros para ver mais resultados."
             }
           />
