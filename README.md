@@ -221,11 +221,10 @@ npm test -- --run
 
 ## 📈 Performance & Quality
 
-- ✅ Lighthouse Performance >90
-- ✅ Lighthouse PWA = 100
-- ✅ Lighthouse Accessibility >95
-- ✅ Bundle size inicial ~142kb
-- ✅ First Contentful Paint <2s
+- 🟠 Lighthouse Performance: 65
+- 🟢 Lighthouse Accessibility: 85
+- 🟠 Lighthouse Best Practices: 77
+- 🟢 Lighthouse SEO: 100
 - ✅ Test Coverage: 96%
 - ✅ TypeScript Strict Mode
 
