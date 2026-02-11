@@ -16,14 +16,12 @@ export default function PokedexPage() {
   const { caught, removePokemon, removeMultiple, getCaughtCount, getCaughtByType } = usePokedex();
   const { addToast } = useToast();
   
-  const { 
-    selectedIds, 
-    isSelectionMode, 
-    toggleSelection, 
-    selectAll, 
-    clearSelection, 
-    toggleSelectionMode,
-    isAllSelected 
+  const {
+    selectedIds,
+    toggleSelection,
+    selectAll,
+    clearSelection,
+    isAllSelected
   } = useSelection(caught, (p) => p.id);
 
   const handleRemove = (id: number, name: string) => {
@@ -134,30 +132,13 @@ export default function PokedexPage() {
           Voltar para Home
         </Link>
         
-        <div className="flex gap-2 w-full sm:w-auto">
-          <Button 
-            variant="outline" 
-            onClick={toggleSelectionMode}
-            className="flex-1 sm:flex-none"
-          >
-            {isSelectionMode ? (
-              <>Cancelar Seleção</>
-            ) : (
-              <>
-                <CheckSquare className="w-4 h-4 mr-2" />
-                Selecionar
-              </>
-            )}
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={handleExport}
-            className="flex-1 sm:flex-none"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Exportar CSV
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          onClick={handleExport}
+        >
+          <Download className="w-4 h-4 mr-2" />
+          Exportar CSV
+        </Button>
       </div>
 
       <div className="text-center mb-12">
@@ -194,9 +175,8 @@ export default function PokedexPage() {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                {isSelectionMode && (
                   <th className="w-12 px-4 py-3">
-                    <div 
+                    <div
                       className="cursor-pointer flex items-center justify-center"
                       onClick={handleHeaderCheckboxChange}
                     >
@@ -207,7 +187,6 @@ export default function PokedexPage() {
                       )}
                     </div>
                   </th>
-                )}
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">
                   Pokémon
                 </th>
@@ -232,22 +211,20 @@ export default function PokedexPage() {
               {caught.map((pokemon) => {
                 const isSelected = selectedIds.includes(pokemon.id);
                 return (
-                  <tr 
-                    key={pokemon.id} 
-                    className={`hover:bg-gray-50 transition-colors ${isSelected ? 'bg-red-50' : ''}`}
-                    onClick={isSelectionMode ? () => toggleSelection(pokemon.id) : undefined}
+                  <tr
+                    key={pokemon.id}
+                    className={`hover:bg-gray-50 transition-colors cursor-pointer ${isSelected ? 'bg-red-50' : ''}`}
+                    onClick={() => toggleSelection(pokemon.id)}
                   >
-                    {isSelectionMode && (
-                      <td className="px-4 py-3">
-                        <div className="flex items-center justify-center cursor-pointer">
-                          {isSelected ? (
-                            <CheckSquare className="w-5 h-5 text-red-600" />
-                          ) : (
-                            <Square className="w-5 h-5 text-gray-300" />
-                          )}
-                        </div>
-                      </td>
-                    )}
+                    <td className="px-4 py-3">
+                      <div className="flex items-center justify-center cursor-pointer">
+                        {isSelected ? (
+                          <CheckSquare className="w-5 h-5 text-red-600" />
+                        ) : (
+                          <Square className="w-5 h-5 text-gray-300" />
+                        )}
+                      </div>
+                    </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center space-x-3">
                         <div className="relative w-12 h-12 flex-shrink-0">
@@ -297,19 +274,17 @@ export default function PokedexPage() {
                             <Eye className="w-4 h-4" />
                           </Button>
                         </Link>
-                        {!isSelectionMode && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleRemove(pokemon.id, pokemon.name);
-                            }}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemove(pokemon.id, pokemon.name);
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
                       </div>
                     </td>
                   </tr>

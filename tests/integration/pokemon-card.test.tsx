@@ -81,7 +81,7 @@ describe("PokemonCard", () => {
 
     render(<PokemonCard pokemon={mockPokemon} />);
 
-    expect(screen.getByText("Capturado")).toBeInTheDocument();
+    expect(screen.getByText("Libertar")).toBeInTheDocument();
   });
 
   it("calls toggle when catch button is clicked", () => {
@@ -120,7 +120,7 @@ describe("PokemonCard", () => {
 
     render(<PokemonCard pokemon={mockPokemon} />);
 
-    const button = screen.getByText("Capturado");
+    const button = screen.getByText("Libertar");
     fireEvent.click(button);
 
     expect(mockAddToast).toHaveBeenCalledWith(

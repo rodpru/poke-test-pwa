@@ -16,13 +16,15 @@ import { formatPokemonId, formatHeight, formatWeight } from '@/lib/utils/formatt
 import { POKEDEX_MAX } from '@/lib/constants';
 import { ArrowLeft, ChevronLeft, ChevronRight, Plus, Check, Sparkles } from 'lucide-react';
 import { useToast } from '@/components/ui/toast';
+import { use } from 'react';
 
 interface PokemonDetailsPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default function PokemonDetailsPage({ params }: PokemonDetailsPageProps) {
-  const pokemonId = parseInt(params.id, 10);
+  const { id } = use(params);
+  const pokemonId = parseInt(id, 10);
   
   const { data: pokemon, isLoading, error } = usePokemonDetails(pokemonId);
   const { isCaught, addPokemon, removePokemon, caught, updateNote } = usePokedex();
